@@ -2,6 +2,7 @@
 #include <cmath>
 #include <iomanip>
 #include <iostream>
+#include <limits>
 
 int main() {
     double x, y;
@@ -17,6 +18,10 @@ int main() {
     std::cout << "R = " << r << '\n';
     std::cout << "S = " << s << '\n';
     std::cout << "max(R, S) = " << c << '\n';
+
+    std::cout << "\nPress Enter to exit...";
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    std::cin.get();
 
     return 0;
 }
