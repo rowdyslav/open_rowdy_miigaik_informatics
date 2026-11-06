@@ -20,25 +20,29 @@ float f2(float x) {
 }
 
 int determineZone(float x, float y) {
-    const float epsilon = 0.03f;
     const float y1 = f1(x);
     const float y2 = f2(x);
+    const float intersectionX = std::sqrt(10.0f);
 
-    if (std::fabs(y - y1) <= epsilon || std::fabs(y - y2) <= epsilon)
-        return 0;
     if (y > y1 && y > y2)
-        return 1;
+        return 5;
     if (y < y1 && y < y2)
-        return 3;
-    return 2;
+        return 2;
+    if (x < -intersectionX)
+        return 1;
+    if (x > intersectionX)
+        return 4;
+    return 3;
 }
 
 std::string zoneName(int zone) {
     switch (zone) {
-        case 0: return "Zone 0 - on the graph boundary";
-        case 1: return "Zone 1 - above both graphs";
-        case 3: return "Zone 3 - below both graphs";
-        default: return "Zone 2 - between the graphs";
+        case 1: return "Zone 1 - between graphs on the left";
+        case 2: return "Zone 2 - below both graphs";
+        case 3: return "Zone 3 - between graphs at the center";
+        case 4: return "Zone 4 - between graphs on the right";
+        case 5: return "Zone 5 - above both graphs";
+        default: return "Unknown zone";
     }
 }
 
