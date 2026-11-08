@@ -88,6 +88,25 @@ bool TmxLevel::LoadFromFile(const std::string &filepath) {
     throw std::runtime_error("Loading level \"" + filepath + "\" failed.");
   }
 
+  return LoadFromDocument(levelFile, GetParentDirectory(filepath), nullptr, 0);
+}
+
+bool TmxLevel::LoadFromMemory(const void *levelData, std::size_t levelSize,
+                              const void *tilesetData,
+                              std::size_t tilesetSize) {
+  tinyxml2::XMLDocument levelFile;
+  if (levelFile.Parse(static_cast<const char *>(levelData), levelSize) !=
+      tinyxml2::XML_SUCCESS) {
+    throw std::runtime_error("Loading embedded level failed.");
+  }
+
+  return LoadFromDocument(levelFile, "", tilesetData, tilesetSize);
+}
+
+bool TmxLevel::LoadFromDocument(tinyxml2::XMLDocument &levelFile,
+                                const std::string &parentDirectory,
+                                const void *tilesetData,
+                                std::size_t tilesetSize) {
   // В формате TMX корневым должен быть элемент <map>.
   tinyxml2::XMLElement *map = levelFile.FirstChildElement("map");
   if (map == nullptr) {
@@ -111,8 +130,7 @@ bool TmxLevel::LoadFromFile(const std::string &filepath) {
 
   tinyxml2::XMLElement *image = tilesetElement->FirstChildElement("image");
   const std::string imageFilename = image->Attribute("source");
-  const std::string imagePath =
-      JoinPaths(GetParentDirectory(filepath), imageFilename);
+  const std::string imagePath = JoinPaths(parentDirectory, imageFilename);
 
   sf::Color matteColor = sf::Color(0, 0, 0, 0);
   if (image->Attribute("trans") != nullptr) {
@@ -120,7 +138,10 @@ bool TmxLevel::LoadFromFile(const std::string &filepath) {
   }
 
   sf::Image img;
-  if (!img.loadFromFile(imagePath)) {
+  const bool imageLoaded = tilesetData != nullptr
+                               ? img.loadFromMemory(tilesetData, tilesetSize)
+                               : img.loadFromFile(imagePath);
+  if (!imageLoaded) {
     std::cout << "Failed to load tile sheet." << std::endl;
     return false;
   }
@@ -128,7 +149,7 @@ bool TmxLevel::LoadFromFile(const std::string &filepath) {
   // Задаёт маскирующий цвет тайлсета: им заливается фон
   //  при наложении прозрачного изображения.
   img.createMaskFromColor(matteColor);
-  // Загружает текстуру из файла.
+  // Загружает текстуру из подготовленного изображения.
   m_tilesetImage.loadFromImage(img);
   // Запрещает сглаживание при растяжении текстуры.
   m_tilesetImage.setSmooth(false);

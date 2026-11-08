@@ -1,10 +1,15 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
+#include <cstddef>
 #include <cstdint>
 #include <map>
 #include <string>
 #include <vector>
+
+namespace tinyxml2 {
+class XMLDocument;
+}
 
 // В SFML 3 спрайт обязан ссылаться на текстуру с момента создания:
 // конструктора по умолчанию у sf::Sprite нет. Пустая текстура-заглушка
@@ -42,6 +47,9 @@ class TmxLevel {
 public:
   // Загружает данные из TMX в память объекта.
   bool LoadFromFile(const std::string &filepath);
+  // Загружает TMX и его тайлсет из массивов байтов автономной сборки.
+  bool LoadFromMemory(const void *levelData, std::size_t levelSize,
+                      const void *tilesetData, std::size_t tilesetSize);
 
   TmxObject GetFirstObject(const std::string &name) const;
   std::vector<TmxObject> GetAllObjects(const std::string &name) const;
@@ -56,6 +64,10 @@ public:
   void Draw(sf::RenderTarget &target) const;
 
 private:
+  bool LoadFromDocument(tinyxml2::XMLDocument &levelFile,
+                        const std::string &parentDirectory,
+                        const void *tilesetData, std::size_t tilesetSize);
+
   int m_width = 0;
   int m_height = 0;
   int m_tileWidth = 0;

@@ -1,5 +1,6 @@
 #include "GameScene.h"
 #include "GameView.h"
+#include "EmbeddedResources.h"
 #include <float.h> // Для FLT_EPSILON
 #include <math.h>
 
@@ -66,7 +67,10 @@ GameScene *NewGameScene() {
   GameScene *pLogic = new GameScene;
   TmxLevel &level = pLogic->level;
 
-  level.LoadFromFile("res/platformer.tmx");
+  level.LoadFromMemory(EmbeddedResources::LEVEL.data,
+                       EmbeddedResources::LEVEL.size,
+                       EmbeddedResources::TILESET.data,
+                       EmbeddedResources::TILESET.size);
   pLogic->player = level.GetFirstObject("player");
   pLogic->coins = level.GetAllObjects("coin");
   pLogic->enemies = level.GetAllObjects("enemy");
