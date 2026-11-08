@@ -6,7 +6,6 @@
 // В SFML 3 sf::Keyboard — это namespace (enum class Key, isKeyPressed).
 namespace Keyboard = sf::Keyboard;
 using sf::Vector2f;
-using sf::Vector2i;
 
 // Абсолютная скорость движения игрока.
 static const float PLAYER_SPEED = 200;
@@ -142,9 +141,11 @@ void UpdateGameScene(void *pData, GameView &view, float deltaSec) {
     }
   }
 
-  const Vector2i windowSize = view.windowSize;
-  SetCameraCenter(view, player.sprite.getPosition() +
-                            Vector2f(windowSize.x / 4, windowSize.y / 4));
+  // Камера следит за игроком по горизонтали, а по вертикали держит дно
+  // карты у нижнего края вида: земля внизу, пространство над уровнем сверху.
+  SetCameraCenter(view, {player.sprite.getPosition().x,
+                         pLogic->level.GetTilemapHeight() -
+                             view.camera.getSize().y / 2.0f});
 }
 
 void DrawGameScene(void *pData, GameView &view) {

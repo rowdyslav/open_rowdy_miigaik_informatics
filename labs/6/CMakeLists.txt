@@ -26,9 +26,7 @@ add_executable(platformer
 target_include_directories(platformer PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(platformer PRIVATE SFML::Graphics SFML::Window SFML::System)
 
-
-set(APP_BIN_DIR ${CMAKE_CURRENT_SOURCE_DIR}/bin)
-set_target_properties(platformer PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${APP_BIN_DIR})
-add_custom_command(TARGET platformer POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/res ${APP_BIN_DIR}/res
-)
+# EXE собирается в корень проекта, рядом с res/:
+# путь "res/platformer.tmx" работает при запуске из каталога exe,
+# а ресурсы не дублируются второй копией.
+set_target_properties(platformer PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})

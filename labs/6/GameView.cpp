@@ -12,9 +12,11 @@ GameView *NewGameView(const sf::Vector2i &windowSize) {
                        sf::State::Windowed, settings);
   pView->window.setFramerateLimit(60);
 
-  pView->camera = sf::View(
-      sf::FloatRect({0.0f, 0.0f}, {float(windowSize.x), float(windowSize.y)}));
-  pView->camera.setViewport(sf::FloatRect({0.0f, 0.0f}, {2.0f, 2.0f}));
+  // Вид вдвое меньше окна (при полноэкранном вьюпорте это зум 2x):
+  // тайлы крупные, а невысокая карта занимает заметную часть экрана.
+  pView->camera = sf::View(sf::FloatRect(
+      {0.0f, 0.0f}, {float(windowSize.x) / 2.0f, float(windowSize.y) / 2.0f}));
+  pView->camera.setViewport(sf::FloatRect({0.0f, 0.0f}, {1.0f, 1.0f}));
 
   return pView;
 }

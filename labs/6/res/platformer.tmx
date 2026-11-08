@@ -534,9 +534,9 @@
   <object id="24" name="enemy" gid="31" x="728" y="62" width="16" height="16"/>
   <object id="25" name="block" x="0.666667" y="147" width="799.333" height="12.6667"/>
   <object id="57" name="coin" gid="34" x="180" y="136" width="16" height="16"/>
-  <object id="58" name="coin" gid="34" x="300" y="136" width="16" height="16"/>
-  <object id="59" name="coin" gid="34" x="640" y="136" width="16" height="16"/>
-  <object id="60" name="enemy" gid="217" x="380" y="144" width="16" height="16"/>
+  <object id="58" name="coin" gid="34" x="140" y="136" width="16" height="16"/>
+  <object id="59" name="coin" gid="34" x="60" y="136" width="16" height="16"/>
+  <object id="60" name="enemy" gid="217" x="210" y="144" width="16" height="16"/>
  </objectgroup>
  <layer name="Слой тайлов 2" width="50" height="10" opacity="0.5">
   <data>
