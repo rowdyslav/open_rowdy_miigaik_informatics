@@ -24,7 +24,7 @@ set(PLATFORMER_SOURCES
     tinyxml2.cpp
 )
 
-# Генерируем C++-массивы при настройке проекта. Изменение любого ресурса
+# Генерирует C++-массивы при настройке проекта. Изменение любого ресурса
 # автоматически запускает повторную настройку и обновляет автономный EXE.
 set(EMBEDDED_RESOURCES_CPP ${CMAKE_CURRENT_BINARY_DIR}/embedded/EmbeddedResources.cpp)
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/embedded)
@@ -47,7 +47,8 @@ embed_resource(TILESET ${CMAKE_CURRENT_SOURCE_DIR}/res/tileset.png)
 embed_resource(FONT ${CMAKE_CURRENT_SOURCE_DIR}/res/arial.ttf)
 file(APPEND ${EMBEDDED_RESOURCES_CPP} "} // namespace EmbeddedResources\n")
 
-add_executable(platformer ${PLATFORMER_SOURCES} ${EMBEDDED_RESOURCES_CPP})
+# WIN32 выбирает GUI-подсистему Windows: отдельная консоль не создаётся.
+add_executable(platformer WIN32 ${PLATFORMER_SOURCES} ${EMBEDDED_RESOURCES_CPP})
 target_include_directories(platformer PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(platformer PRIVATE SFML::Graphics SFML::Window SFML::System)
 
