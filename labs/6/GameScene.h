@@ -12,9 +12,10 @@ struct GameScene {
   // позиция игрока, куда его возвращают враги при столкновении.
   std::vector<TmxObject> blocks;
   sf::Vector2f startPosition;
-  // Текущая скорость вертикального перемещения игрока
-  // (накапливается гравитацией).
+  // Вертикальная скорость: положительная вниз, отрицательная вверх.
   float fallVelocity = 0;
+  bool isOnGround = false;
+  bool wasJumpKeyPressed = false;
 };
 GameScene *NewGameScene();
 void UpdateGameScene(void *pData, GameView &view, float deltaSec);

@@ -14,6 +14,9 @@ static const float PLAYER_SPEED = 200;
 // Ускорение свободного падения на уровне (пиксели в секунду за секунду).
 static const float GRAVITY = 1200;
 
+// Начальная скорость прыжка в пикселях в секунду.
+static const float JUMP_SPEED = 360;
+
 // Максимальная скорость падения. Ограничивает смещение за один кадр,
 // чтобы игрок не проходил сквозь тонкие препятствия.
 static const float MAX_FALL_SPEED = 480;
@@ -106,19 +109,40 @@ void UpdateGameScene(void *pData, GameView &view, float deltaSec) {
     }
   }
 
-  // Гравитация ускоряет вертикальное падение игрока.
+  // Прыжок выполняется только по новому нажатию и по состоянию земли,
+  // полученному в прошлом кадре. Удержание клавиши не даёт новый импульс.
+  const bool jumpKeyPressed =
+      Keyboard::isKeyPressed(Keyboard::Key::W) ||
+      Keyboard::isKeyPressed(Keyboard::Key::Up);
+  if (jumpKeyPressed && !pLogic->wasJumpKeyPressed && pLogic->isOnGround) {
+    pLogic->fallVelocity = -JUMP_SPEED;
+  }
+  pLogic->wasJumpKeyPressed = jumpKeyPressed;
+
+  // До вертикальной проверки землю нужно подтвердить заново.
+  pLogic->isOnGround = false;
+
+  // Гравитация постепенно направляет вертикальную скорость вниз.
   pLogic->fallVelocity += GRAVITY * deltaSec;
   if (pLogic->fallVelocity > MAX_FALL_SPEED) {
     pLogic->fallVelocity = MAX_FALL_SPEED;
   }
+  const sf::FloatRect oldBounds = player.sprite.getGlobalBounds();
   const float stepY = pLogic->fallVelocity * deltaSec;
   player.MoveBy({0, stepY});
 
-  // Приземление: столкновение с препятствием отменяет вертикальный шаг
-  // и обнуляет скорость падения.
+  // Землей считается только контакт сверху при движении вниз.
+  // При подъёме столкновение прекращает движение вверх без установки земли.
   for (const TmxObject &block : pLogic->blocks) {
     if (PlayerHitsBlock(player, block)) {
+      const bool landed =
+          stepY > 0 &&
+          oldBounds.position.y + oldBounds.size.y <=
+              block.rect.position.y + 0.01f;
       player.MoveBy({0, -stepY});
+      if (landed) {
+        pLogic->isOnGround = true;
+      }
       pLogic->fallVelocity = 0;
       break;
     }
@@ -142,6 +166,7 @@ void UpdateGameScene(void *pData, GameView &view, float deltaSec) {
             .has_value()) {
       player.sprite.setPosition(pLogic->startPosition);
       pLogic->fallVelocity = 0;
+      pLogic->isOnGround = false;
     }
   }
 
