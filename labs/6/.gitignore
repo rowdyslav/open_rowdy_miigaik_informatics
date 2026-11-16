@@ -1,0 +1,9 @@
+build/
+.vs/
+x64/
+Debug/
+Release/
+tests/x64/
+tests/Debug/
+tests/Release/
+*.user
