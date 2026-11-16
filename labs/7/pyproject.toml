@@ -1,0 +1,42 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "vector-divider"
+version = "0.1.0"
+description = "Divide a numeric vector by a number through Python/C API"
+requires-python = ">=3.15"
+authors = [
+    { name = "rowdyslav" },
+]
+dependencies = [
+    "matplotlib",
+]
+
+[dependency-groups]
+dev = [
+    "ruff",
+]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+vector_divider = ["_core.pyi"]
+
+[[tool.setuptools.ext-modules]]
+name = "vector_divider._core"
+sources = ["src/vector_divider/_core.cpp"]
+language = "c++"
+extra-compile-args = ["/O2"]
+
+[tool.ruff]
+line-length = 88
+src = ["src"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
